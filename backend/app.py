@@ -9,7 +9,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # --- Config ---
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or "dev-key-change-in-production"
 
 database_url = os.getenv("DATABASE_URL", "sqlite:///blog.db")
 # Railway provides postgres:// but SQLAlchemy needs postgresql://
