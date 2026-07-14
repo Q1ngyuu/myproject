@@ -86,7 +86,7 @@ export default function Home() {
             {posts.map((post) => (
               <Link
                 key={post.id}
-                href={`/post?id=${post.id}`}
+                href={`/posts/${post.id}`}
                 className="group rounded-xl border bg-white p-6 shadow-sm transition hover:shadow-md"
               >
                 <h3 className="mb-2 text-lg font-semibold text-gray-900 group-hover:text-blue-600">

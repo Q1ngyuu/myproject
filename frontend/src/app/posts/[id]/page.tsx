@@ -1,25 +1,18 @@
 "use client";
 
-import { useEffect, useState, useCallback, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState, useCallback } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getPost, type PostDetail } from "@/lib/api";
 
-function PostContent() {
-  const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-
+export default function PostDetailPage() {
+  const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<PostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchPost = useCallback(async () => {
-    if (!id) {
-      setNotFound(true);
-      setLoading(false);
-      return;
-    }
     setLoading(true);
     setError(null);
     setNotFound(false);
@@ -127,22 +120,5 @@ function PostContent() {
         </div>
       </main>
     </div>
-  );
-}
-
-export default function PostPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="mx-auto max-w-3xl px-4 py-10">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 w-2/3 rounded bg-gray-200" />
-            <div className="h-4 w-full rounded bg-gray-100" />
-          </div>
-        </div>
-      }
-    >
-      <PostContent />
-    </Suspense>
   );
 }
