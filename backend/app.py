@@ -24,5 +24,9 @@ def health():
     return jsonify(status="ok", message="Blog System API is running")
 
 
+# --- Models ---
+import models  # noqa: E402 F401 — ensure models are registered with SQLAlchemy
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
