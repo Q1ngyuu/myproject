@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getPost, type PostDetail } from "@/src/lib/api";
+import { getPost, type PostDetail } from "@/lib/api";
 
 export default function PostDetailPage() {
   const { id } = useParams<{ id: string }>();

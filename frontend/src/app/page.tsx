@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { getPosts, type PostListItem } from "@/src/lib/api";
+import { getPosts, type PostListItem } from "@/lib/api";
 
 export default function Home() {
   const [posts, setPosts] = useState<PostListItem[]>([]);

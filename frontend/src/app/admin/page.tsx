@@ -14,7 +14,7 @@ import {
   deletePost,
   type PostListItem,
   type Category,
-} from "@/src/lib/api";
+} from "@/lib/api";
 
 // --- Schema ---
 
@@ -22,7 +22,7 @@ const postSchema = z.object({
   title: z.string().min(1, "标题不能为空"),
   content: z.string().min(1, "内容不能为空"),
   summary: z.string().optional(),
-  category_id: z.coerce.number({ invalid_type_error: "请选择分类" }).min(1, "请选择分类"),
+  category_id: z.string().min(1, "请选择分类"),
 });
 
 type PostFormData = z.infer<typeof postSchema>;
@@ -51,9 +51,9 @@ export default function AdminPage() {
     reset,
     setValue,
     formState: { errors },
-  } = useForm<PostFormData>({
+  } = useForm<z.input<typeof postSchema>>({
     resolver: zodResolver(postSchema),
-    defaultValues: { title: "", content: "", summary: "", category_id: 0 },
+    defaultValues: { title: "", content: "", summary: "", category_id: "" },
   });
 
   // --- Data fetching ---
@@ -80,7 +80,7 @@ export default function AdminPage() {
   // --- Modal helpers ---
   const openCreateModal = () => {
     setEditingId(null);
-    reset({ title: "", content: "", summary: "", category_id: 0 });
+    reset({ title: "", content: "", summary: "", category_id: "" });
     setModalOpen(true);
   };
 
@@ -92,7 +92,7 @@ export default function AdminPage() {
         title: post.title,
         content: post.content,
         summary: post.summary || "",
-        category_id: post.category_id ?? 0,
+        category_id: String(post.category_id ?? ""),
       });
       setModalOpen(true);
     } catch (err) {
@@ -106,13 +106,14 @@ export default function AdminPage() {
   };
 
   // --- Submit ---
-  const onSubmit = async (data: PostFormData) => {
+  const onSubmit = async (data: z.infer<typeof postSchema>) => {
     setSubmitting(true);
     try {
+      const payload = { ...data, category_id: Number(data.category_id) };
       if (editingId) {
-        await updatePost(editingId, data);
+        await updatePost(editingId, payload);
       } else {
-        await createPost(data);
+        await createPost(payload);
       }
       closeModal();
       await fetchData();
@@ -320,7 +321,7 @@ export default function AdminPage() {
                   {...register("category_id")}
                   className="w-full rounded-lg border px-3 py-2 text-sm focus:border-gray-900 focus:outline-none"
                 >
-                  <option value={0}>请选择分类</option>
+                  <option value="">请选择分类</option>
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
