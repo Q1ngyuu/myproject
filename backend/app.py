@@ -27,6 +27,11 @@ def health():
 # --- Models ---
 import models  # noqa: E402 F401 — ensure models are registered with SQLAlchemy
 
+# --- Blueprints ---
+from routes.posts import posts_bp
+
+app.register_blueprint(posts_bp, url_prefix="/api/posts")
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
