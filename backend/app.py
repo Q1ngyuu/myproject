@@ -10,7 +10,12 @@ app = Flask(__name__)
 
 # --- Config ---
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///blog.db")
+
+database_url = os.getenv("DATABASE_URL", "sqlite:///blog.db")
+# Railway provides postgres:// but SQLAlchemy needs postgresql://
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # --- Extensions ---
