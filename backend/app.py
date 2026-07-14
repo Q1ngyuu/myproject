@@ -29,8 +29,10 @@ import models  # noqa: E402 F401 — ensure models are registered with SQLAlchem
 
 # --- Blueprints ---
 from routes.posts import posts_bp
+from routes.categories import categories_bp
 
 app.register_blueprint(posts_bp, url_prefix="/api/posts")
+app.register_blueprint(categories_bp, url_prefix="/api/categories")
 
 
 if __name__ == "__main__":
