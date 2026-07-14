@@ -1,5 +1,0 @@
-[build]
-builder = "nixpacks"
-
-[build.config]
-root = "backend"
