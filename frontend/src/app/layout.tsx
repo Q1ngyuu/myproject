@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Blog System",
-  description: "A simple blog system",
+  title: "我的博客 — 记录技术与生活",
+  description: "一个简洁优雅的个人博客系统，分享技术文章与生活随笔",
 };
 
 export default function RootLayout({
