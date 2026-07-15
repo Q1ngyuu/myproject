@@ -17,6 +17,8 @@ def fail(message, code=1, status=400):
 @posts_bp.route("/", methods=["GET"])
 def list_posts():
     q = request.args.get("q", "").strip()
+    page = request.args.get("page", 1, type=int)
+    limit = request.args.get("limit", 100, type=int)
 
     query = (
         db.session.query(
@@ -39,7 +41,16 @@ def list_posts():
             )
         )
 
-    posts = query.order_by(Post.created_at.desc()).all()
+    total = query.count()
+    total_pages = max(1, (total + limit - 1) // limit)
+
+    posts = (
+        query
+        .order_by(Post.created_at.desc())
+        .offset((page - 1) * limit)
+        .limit(limit)
+        .all()
+    )
 
     result = [
         {
@@ -51,7 +62,14 @@ def list_posts():
         }
         for p in posts
     ]
-    return ok(result)
+
+    return ok({
+        "posts": result,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "totalPages": total_pages,
+    })
 
 
 # --- GET /api/posts/<id> ---

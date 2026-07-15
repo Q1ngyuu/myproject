@@ -78,7 +78,7 @@ export default function AdminPage() {
         getPosts(),
         getCategories(),
       ]);
-      setPosts(postsData);
+      setPosts(postsData.posts);
       setCategories(categoriesData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load data");

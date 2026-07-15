@@ -21,6 +21,14 @@ export interface PostDetail {
   updated_at: string | null;
 }
 
+export interface PaginatedPosts {
+  posts: PostListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface Category {
   id: number;
   name: string;
@@ -73,8 +81,15 @@ async function request<T>(fn: () => Promise<{ data: ApiResponse<T> }>): Promise<
 
 // --- Posts API ---
 
-export async function getPosts(q?: string): Promise<PostListItem[]> {
-  const params = q ? { q } : {};
+export async function getPosts(
+  q?: string,
+  page?: number,
+  limit?: number
+): Promise<PaginatedPosts> {
+  const params: Record<string, string | number> = {};
+  if (q) params.q = q;
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
   return request(() => api.get("/api/posts", { params }));
 }
 

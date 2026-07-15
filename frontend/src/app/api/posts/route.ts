@@ -6,7 +6,20 @@ initStore();
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const q = searchParams.get("q") || undefined;
-  return NextResponse.json({ code: 0, data: getPostList(q), message: "success" });
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const limit = parseInt(searchParams.get("limit") || "100", 10);
+
+  const all = getPostList(q);
+  const total = all.length;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  const start = (page - 1) * limit;
+  const posts = all.slice(start, start + limit);
+
+  return NextResponse.json({
+    code: 0,
+    data: { posts, total, page, limit, totalPages },
+    message: "success",
+  });
 }
 
 export async function POST(request: NextRequest) {

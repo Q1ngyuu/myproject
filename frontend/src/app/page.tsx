@@ -7,6 +7,7 @@ import { getPosts, type PostListItem } from "@/lib/api";
 import EmptyState from "@/components/EmptyState";
 import SkeletonCard from "@/components/SkeletonCard";
 import SearchBar from "@/components/SearchBar";
+import Pagination from "@/components/Pagination";
 
 // ── Stagger animation variants ──
 
@@ -32,13 +33,21 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const fetchPosts = useCallback(async (q?: string) => {
+  const PAGE_SIZE = 6;
+
+  const fetchPosts = useCallback(async (q?: string, p = 1) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getPosts(q);
-      setPosts(data);
+      const data = await getPosts(q, p, PAGE_SIZE);
+      setPosts(data.posts);
+      setTotal(data.total);
+      setTotalPages(data.totalPages);
+      setPage(data.page);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load posts");
     } finally {
@@ -53,9 +62,18 @@ export default function Home() {
   const handleSearch = useCallback(
     (q: string) => {
       setSearchQuery(q);
-      fetchPosts(q || undefined);
+      setPage(1);
+      fetchPosts(q || undefined, 1);
     },
     [fetchPosts]
+  );
+
+  const handlePageChange = useCallback(
+    (p: number) => {
+      fetchPosts(searchQuery || undefined, p);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+    [fetchPosts, searchQuery]
   );
 
   return (
@@ -90,7 +108,7 @@ export default function Home() {
           </h2>
           <p className="mt-2 text-base text-gray-500">
             {searchQuery
-              ? `找到 ${posts.length} 篇与「${searchQuery}」相关的文章`
+              ? `找到 ${total} 篇与「${searchQuery}」相关的文章`
               : "记录技术、生活与思考 ✨"}
           </p>
         </div>
@@ -157,6 +175,15 @@ export default function Home() {
               ))}
             </div>
           </motion.div>
+        )}
+
+        {/* Pagination */}
+        {!loading && !error && posts.length > 0 && (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         )}
 
         {/* Empty / No results */}
