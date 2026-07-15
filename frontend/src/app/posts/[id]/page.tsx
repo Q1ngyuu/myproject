@@ -5,6 +5,7 @@ import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { getPost, type PostDetail } from "@/lib/api";
+import SkeletonCard from "@/components/SkeletonCard";
 
 export default function PostDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -76,34 +77,7 @@ export default function PostDetailPage() {
 
   // ── Loading ──
   if (loading) {
-    return (
-      <div className="min-h-screen">
-        <header className="sticky top-0 z-10 border-b border-indigo-100/60 bg-white/75 shadow-sm backdrop-blur-xl">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
-            <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 animate-pulse rounded-xl bg-gray-200" />
-              <div className="h-5 w-24 animate-pulse rounded-md bg-gray-200" />
-            </div>
-            <div className="h-5 w-20 animate-pulse rounded-md bg-gray-200" />
-          </div>
-        </header>
-        <main className="mx-auto max-w-3xl px-4 py-10">
-          <div className="animate-pulse rounded-2xl border border-gray-100 bg-white p-8 shadow-lg">
-            <div className="mb-4 h-10 w-3/4 rounded-md bg-gray-200" />
-            <div className="mb-2 flex gap-3">
-              <div className="h-6 w-16 rounded-full bg-gray-100" />
-              <div className="h-6 w-32 rounded-md bg-gray-100" />
-            </div>
-            <div className="my-8 h-px bg-gray-100" />
-            <div className="space-y-3">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-4 w-full rounded-md bg-gray-100" />
-              ))}
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+    return <SkeletonCard variant="article" />;
   }
 
   // ── Post content ──

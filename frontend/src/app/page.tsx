@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { getPosts, type PostListItem } from "@/lib/api";
 import EmptyState from "@/components/EmptyState";
+import SkeletonCard from "@/components/SkeletonCard";
 
 export default function Home() {
   const [posts, setPosts] = useState<PostListItem[]>([]);
@@ -60,26 +61,7 @@ export default function Home() {
         </div>
 
         {/* Loading skeleton */}
-        {loading && (
-          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg">
-            <div className="divide-y divide-gray-50">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="animate-pulse px-6 py-5">
-                  <div className="flex items-start justify-between gap-6">
-                    <div className="flex-1 space-y-2.5">
-                      <div className="h-5 w-1/2 rounded-md bg-gray-200" />
-                      <div className="h-4 w-full rounded-md bg-gray-100" />
-                    </div>
-                    <div className="flex shrink-0 items-center gap-3">
-                      <div className="h-5 w-14 rounded-full bg-gray-100" />
-                      <div className="h-4 w-20 rounded-md bg-gray-100" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {loading && <SkeletonCard variant="list-item" count={5} />}
 
         {/* Error */}
         {!loading && error && (

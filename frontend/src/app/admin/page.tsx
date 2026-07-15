@@ -16,6 +16,7 @@ import {
   type Category,
 } from "@/lib/api";
 import EmptyState from "@/components/EmptyState";
+import SkeletonCard from "@/components/SkeletonCard";
 
 // ── Schema ──
 
@@ -156,25 +157,24 @@ export default function AdminPage() {
       <div className="min-h-screen">
         <Navbar />
         <main className="mx-auto max-w-5xl px-4 py-10">
-          {/* Stats skeleton */}
           <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="animate-pulse rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <div className="mb-2 h-4 w-16 rounded bg-gray-200" />
-                <div className="h-8 w-12 rounded bg-gray-100" />
-              </div>
-            ))}
+            <SkeletonCard variant="stat-card" count={3} />
           </div>
-          {/* Table skeleton */}
-          <div className="animate-pulse rounded-2xl border border-gray-100 bg-white shadow-sm">
-            <div className="border-b border-gray-100 px-6 py-3.5">
-              <div className="h-4 w-3/4 rounded bg-gray-100" />
-            </div>
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="border-b border-gray-50 px-6 py-4">
-                <div className="h-4 w-full rounded bg-gray-50" />
-              </div>
-            ))}
+          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 bg-slate-50/80">
+                  {["w-8", "w-12", "w-10", "w-16", "w-10"].map((w, i) => (
+                    <th key={i} className="px-6 py-3.5">
+                      <div className={`h-3 ${w} animate-pulse rounded bg-gray-200`} />
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                <SkeletonCard variant="table-row" count={5} />
+              </tbody>
+            </table>
           </div>
         </main>
       </div>
