@@ -17,7 +17,6 @@ def fail(message, code=1, status=400):
 @posts_bp.route("/", methods=["GET"])
 def list_posts():
     q = request.args.get("q", "").strip()
-    category_id = request.args.get("category_id", type=int)
     page = request.args.get("page", 1, type=int)
     limit = request.args.get("limit", 100, type=int)
 
@@ -31,9 +30,6 @@ def list_posts():
         )
         .outerjoin(Category, Post.category_id == Category.id)
     )
-
-    if category_id:
-        query = query.filter(Post.category_id == category_id)
 
     if q:
         query = query.filter(
