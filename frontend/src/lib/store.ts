@@ -314,8 +314,8 @@ export function initStore(): void {
 
 // --- Posts CRUD ---
 
-export function getPostList() {
-  return posts
+export function getPostList(q?: string) {
+  let result = posts
     .map((p) => {
       const cat = categories.find((c) => c.id === p.category_id);
       return {
@@ -327,6 +327,18 @@ export function getPostList() {
       };
     })
     .sort((a, b) => b.id - a.id);
+
+  if (q) {
+    const lower = q.toLowerCase();
+    result = result.filter(
+      (p) =>
+        p.title.toLowerCase().includes(lower) ||
+        (p.summary && p.summary.toLowerCase().includes(lower)) ||
+        (p.category_name && p.category_name.toLowerCase().includes(lower))
+    );
+  }
+
+  return result;
 }
 
 export function getPostById(id: number) {

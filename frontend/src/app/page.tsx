@@ -6,6 +6,7 @@ import { motion, type Variants } from "framer-motion";
 import { getPosts, type PostListItem } from "@/lib/api";
 import EmptyState from "@/components/EmptyState";
 import SkeletonCard from "@/components/SkeletonCard";
+import SearchBar from "@/components/SearchBar";
 
 // ── Stagger animation variants ──
 
@@ -30,12 +31,13 @@ export default function Home() {
   const [posts, setPosts] = useState<PostListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const fetchPosts = useCallback(async () => {
+  const fetchPosts = useCallback(async (q?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getPosts();
+      const data = await getPosts(q);
       setPosts(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load posts");
@@ -48,20 +50,31 @@ export default function Home() {
     fetchPosts();
   }, [fetchPosts]);
 
+  const handleSearch = useCallback(
+    (q: string) => {
+      setSearchQuery(q);
+      fetchPosts(q || undefined);
+    },
+    [fetchPosts]
+  );
+
   return (
     <div className="min-h-screen">
       {/* Navbar — glassmorphism + gradient accent */}
       <header className="sticky top-0 z-10 border-b border-indigo-100/60 bg-white/75 shadow-sm backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
-          <Link href="/" className="flex items-center gap-2.5 text-xl font-bold text-gray-900">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3.5">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5 text-xl font-bold text-gray-900">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 text-base shadow-md shadow-indigo-500/20">
               ✍️
             </span>
-            <span className="gradient-text">我的博客</span>
+            <span className="hidden sm:inline gradient-text">我的博客</span>
           </Link>
+
+          <SearchBar onSearch={handleSearch} />
+
           <Link
             href="/admin"
-            className="rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-indigo-500/25 transition-all duration-300 hover:from-indigo-700 hover:to-blue-700 hover:shadow-lg hover:shadow-indigo-500/30 hover:scale-105"
+            className="shrink-0 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-md shadow-indigo-500/25 transition-all duration-300 hover:from-indigo-700 hover:to-blue-700 hover:shadow-lg hover:shadow-indigo-500/30 hover:scale-105"
           >
             后台管理
           </Link>
@@ -73,10 +86,12 @@ export default function Home() {
         {/* Hero heading */}
         <div className="mb-10">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            最新文章
+            {searchQuery ? "搜索结果" : "最新文章"}
           </h2>
           <p className="mt-2 text-base text-gray-500">
-            记录技术、生活与思考 ✨
+            {searchQuery
+              ? `找到 ${posts.length} 篇与「${searchQuery}」相关的文章`
+              : "记录技术、生活与思考 ✨"}
           </p>
         </div>
 
@@ -88,7 +103,7 @@ export default function Home() {
           <div className="flex flex-col items-center gap-4 py-20">
             <p className="text-red-500">{error}</p>
             <button
-              onClick={fetchPosts}
+              onClick={() => fetchPosts()}
               className="rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-2.5 text-sm font-medium text-white shadow-md shadow-indigo-500/25 transition-all duration-300 hover:from-indigo-700 hover:to-blue-700 hover:shadow-lg hover:scale-105"
             >
               重试
@@ -144,14 +159,22 @@ export default function Home() {
           </motion.div>
         )}
 
-        {/* Empty */}
+        {/* Empty / No results */}
         {!loading && !error && posts.length === 0 && (
-          <EmptyState
-            icon="📝"
-            title="还没有文章"
-            description="暂时还没有发布任何文章，快去后台创作第一篇吧"
-            action={{ label: "去创作", href: "/admin" }}
-          />
+          searchQuery ? (
+            <EmptyState
+              icon="🔍"
+              title="未找到相关文章"
+              description={`没有找到与「${searchQuery}」相关的文章，请尝试其他关键词`}
+            />
+          ) : (
+            <EmptyState
+              icon="📝"
+              title="还没有文章"
+              description="暂时还没有发布任何文章，快去后台创作第一篇吧"
+              action={{ label: "去创作", href: "/admin" }}
+            />
+          )
         )}
       </main>
     </div>

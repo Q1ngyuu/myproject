@@ -3,8 +3,10 @@ import { initStore, getPostList, createPost } from "@/lib/store";
 
 initStore();
 
-export async function GET() {
-  return NextResponse.json({ code: 0, data: getPostList(), message: "success" });
+export async function GET(request: NextRequest) {
+  const { searchParams } = request.nextUrl;
+  const q = searchParams.get("q") || undefined;
+  return NextResponse.json({ code: 0, data: getPostList(q), message: "success" });
 }
 
 export async function POST(request: NextRequest) {

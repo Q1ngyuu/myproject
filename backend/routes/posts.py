@@ -16,7 +16,9 @@ def fail(message, code=1, status=400):
 # --- GET /api/posts ---
 @posts_bp.route("/", methods=["GET"])
 def list_posts():
-    posts = (
+    q = request.args.get("q", "").strip()
+
+    query = (
         db.session.query(
             Post.id,
             Post.title,
@@ -25,9 +27,20 @@ def list_posts():
             Post.created_at,
         )
         .outerjoin(Category, Post.category_id == Category.id)
-        .order_by(Post.created_at.desc())
-        .all()
     )
+
+    if q:
+        query = query.filter(
+            db.or_(
+                Post.title.ilike(f"%{q}%"),
+                Post.content.ilike(f"%{q}%"),
+                Post.summary.ilike(f"%{q}%"),
+                Category.name.ilike(f"%{q}%"),
+            )
+        )
+
+    posts = query.order_by(Post.created_at.desc()).all()
+
     result = [
         {
             "id": p.id,

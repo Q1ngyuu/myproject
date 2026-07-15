@@ -73,8 +73,9 @@ async function request<T>(fn: () => Promise<{ data: ApiResponse<T> }>): Promise<
 
 // --- Posts API ---
 
-export async function getPosts(): Promise<PostListItem[]> {
-  return request(() => api.get("/api/posts"));
+export async function getPosts(q?: string): Promise<PostListItem[]> {
+  const params = q ? { q } : {};
+  return request(() => api.get("/api/posts", { params }));
 }
 
 export async function getPost(id: number): Promise<PostDetail> {
