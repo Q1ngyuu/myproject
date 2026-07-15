@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ToastProvider from "@/components/ToastProvider";
+import ClientLayout from "@/components/ClientLayout";
 
 export const metadata: Metadata = {
   title: "我的博客 — 记录技术与生活",
@@ -15,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className="antialiased">
-        {children}
+        <ClientLayout>{children}</ClientLayout>
         <ToastProvider />
       </body>
     </html>

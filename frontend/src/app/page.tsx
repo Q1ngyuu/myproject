@@ -2,9 +2,29 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { motion, type Variants } from "framer-motion";
 import { getPosts, type PostListItem } from "@/lib/api";
 import EmptyState from "@/components/EmptyState";
 import SkeletonCard from "@/components/SkeletonCard";
+
+// ── Stagger animation variants ──
+
+const container: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
 
 export default function Home() {
   const [posts, setPosts] = useState<PostListItem[]>([]);
@@ -78,45 +98,50 @@ export default function Home() {
 
         {/* Post list */}
         {!loading && !error && (
-          <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg shadow-gray-200/50">
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-lg shadow-gray-200/50"
+          >
             <div className="divide-y divide-gray-50">
-              {posts.map((post, index) => (
-                <Link
-                  key={post.id}
-                  href={`/posts/${post.id}`}
-                  className="animate-fade-in-up group relative flex items-start justify-between gap-6 px-6 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gradient-to-r hover:from-indigo-50/40 hover:to-blue-50/40 hover:shadow-md"
-                  style={{ animationDelay: `${index * 0.08}s`, opacity: 0 }}
-                >
-                  {/* Hover accent bar */}
-                  <span className="absolute inset-y-2.5 left-0 w-1 rounded-r-full bg-gradient-to-b from-indigo-500 to-blue-500 opacity-0 transition-all duration-300 group-hover:opacity-100" />
+              {posts.map((post) => (
+                <motion.div key={post.id} variants={item}>
+                  <Link
+                    href={`/posts/${post.id}`}
+                    className="group relative flex items-start justify-between gap-6 px-6 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gradient-to-r hover:from-indigo-50/40 hover:to-blue-50/40 hover:shadow-md"
+                  >
+                    {/* Hover accent bar */}
+                    <span className="absolute inset-y-2.5 left-0 w-1 rounded-r-full bg-gradient-to-b from-indigo-500 to-blue-500 opacity-0 transition-all duration-300 group-hover:opacity-100" />
 
-                  {/* Left: title + summary */}
-                  <div className="min-w-0 flex-1">
-                    <h3 className="mb-1.5 text-lg font-semibold text-gray-900 transition-colors duration-300 group-hover:text-indigo-600">
-                      {post.title}
-                    </h3>
-                    <p className="line-clamp-1 text-sm leading-relaxed text-gray-500">
-                      {post.summary || "暂无摘要"}
-                    </p>
-                  </div>
+                    {/* Left: title + summary */}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="mb-1.5 text-lg font-semibold text-gray-900 transition-colors duration-300 group-hover:text-indigo-600">
+                        {post.title}
+                      </h3>
+                      <p className="line-clamp-1 text-sm leading-relaxed text-gray-500">
+                        {post.summary || "暂无摘要"}
+                      </p>
+                    </div>
 
-                  {/* Right: category + date */}
-                  <div className="flex shrink-0 items-center gap-4 pt-0.5">
-                    {post.category_name ? (
-                      <span className="whitespace-nowrap rounded-full border border-indigo-100 bg-gradient-to-r from-indigo-50 to-blue-50 px-3 py-1 text-xs font-medium text-indigo-600">
-                        {post.category_name}
+                    {/* Right: category + date */}
+                    <div className="flex shrink-0 items-center gap-4 pt-0.5">
+                      {post.category_name ? (
+                        <span className="whitespace-nowrap rounded-full border border-indigo-100 bg-gradient-to-r from-indigo-50 to-blue-50 px-3 py-1 text-xs font-medium text-indigo-600">
+                          {post.category_name}
+                        </span>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="whitespace-nowrap text-xs text-gray-400">
+                        {new Date(post.created_at).toLocaleDateString("zh-CN")}
                       </span>
-                    ) : (
-                      <span />
-                    )}
-                    <span className="whitespace-nowrap text-xs text-gray-400">
-                      {new Date(post.created_at).toLocaleDateString("zh-CN")}
-                    </span>
-                  </div>
-                </Link>
+                    </div>
+                  </Link>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Empty */}
