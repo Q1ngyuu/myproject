@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app import db
+from extensions import db
 from models import Category
 
 categories_bp = Blueprint("categories", __name__)

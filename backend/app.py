@@ -1,8 +1,8 @@
 import os
 from flask import Flask, jsonify
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from extensions import db
 
 load_dotenv()
 
@@ -20,7 +20,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # --- Extensions ---
 CORS(app)
-db = SQLAlchemy(app)
+db.init_app(app)
 
 # --- Routes ---
 
