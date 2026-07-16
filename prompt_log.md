@@ -45,7 +45,18 @@
 | 2026-07-15 | 安装 framer-motion 添加页面过渡 + 列表 staggered 动画 | `components/PageTransition.tsx`、`components/ClientLayout.tsx`、`layout.tsx`、`page.tsx` | npm install framer-motion；PageTransition 包裹全局(淡入+上滑12px/0.3s)；ClientLayout 客户端桥接；首页列表 Variants：container staggerChildren:0.08s + item y20→0/duration:0.4s 依次上浮 |
 | 2026-07-15 | 添加文章搜索功能 | `components/SearchBar.tsx`、`page.tsx`、`lib/api.ts`、`lib/store.ts`、`app/api/posts/route.ts`、`backend/routes/posts.py` | SearchBar 组件 500ms 防抖；store.getPostList(q?) 按标题/摘要/分类名过滤；API route 读取 ?q= 参数；Flask ILIKE 模糊搜索；导航栏嵌入搜索框+后台管理按钮；搜索结果动态标题"找到 N 篇与「关键词」相关的文章" |
 | 2026-07-15 | 添加文章分页功能 | `components/Pagination.tsx`、`app/api/posts/route.ts`、`lib/api.ts`、`page.tsx`、`admin/page.tsx`、`backend/routes/posts.py` | API 返回 {posts, total, page, limit, totalPages}；Pagination 组件(←上一页/页码/下一页→)；当前页渐变蓝高亮；首页/末页按钮自动 disable；切页 smooth scrollTo top；默认 limit=6；Flask offset/limit 分页；admin 适配 .posts 新格式 |
+| 2026-07-15 | 添加按分类筛选功能（后回退） | `page.tsx`、`lib/api.ts`、`backend/routes/posts.py` | 首页顶部胶囊标签"全部"+分类名；GET /api/posts?category_id=1；选中态渐变主色背景；handleCategoryChange 回调；Flask 端 if category_id filter；后因生产构建缓存问题回退 |
+| 2026-07-15 | 修复循环导入：提取 db 到 extensions.py | `extensions.py`、`app.py`、`models.py`、`routes/posts.py`、`routes/categories.py` | python app.py 直接运行时报 ImportError circular import；将 db=SQLAlchemy() 提取到独立 extensions.py，app.py 用 db.init_app(app)，models/routes 从 extensions 导入；消除 app↔models 循环 |
+| 2026-07-15 | 回退分类筛选功能 | `page.tsx`、`lib/api.ts`、`backend/routes/posts.py` | 移除 category_id 参数、分类标签 UI、handleCategoryChange、categories 状态；恢复 fetchPosts 为 3 参数；保留 extensions.py 修复 |
+| 2026-07-16 | 文章详情页增加右侧边栏（其他文章） | `posts/[id]/page.tsx` | 布局从单列 max-w-3xl 改为双列 max-w-6xl；左侧文章内容+返回按钮，右侧 sticky 侧边栏显示其他文章标题列表（排除当前文章，最多 8 篇）；hover 变紫+圆点指示器+查看更多→；移动端自动上下排列 |
+| 2026-07-16 | 首页添加风景照轮播图 | `components/Carousel.tsx`、`page.tsx`、`public/pictures/` | 11 张风景照复制到 public/pictures；Carousel 组件自动播放(5s)、淡入淡出(opacity 700ms)、悬停暂停、左右毛玻璃箭头、圆点指示器(当前高亮)、计数器、键盘←→控制、21:9 宽高比；全宽无边距 |
+| 2026-07-16 | 轮播图改为全宽无边距 | `Carousel.tsx`、`page.tsx` | 移除 rounded-3xl、shadow-2xl、max-w-6xl 外层包裹；轮播从左到右撑满屏幕 |
+| 2026-07-16 | 移除翻页时自动返回顶部 | `page.tsx` | 删除 handlePageChange 中的 window.scrollTo({ top: 0, behavior: "smooth" }) |
+| 2026-07-16 | 提交 SQLite 数据库文件 + 更新 README | `.gitignore`、`blog.db`、`seed.py`、`README.md` | gitignore 添加 !backend/blog.db 例外 + instance/ 忽略；blog.db 含 3 分类 8 文章(16KB)；seed.py 重建脚本；README 更新技术栈(SQLite/Flask)、项目结构、快速开始(后端+前端两步)、数据持久化说明 |
+| 2026-07-16 | 扩充种子数据到 30 篇 | `blog.db`、`add_posts.py`、`app.py` | 新增 22 篇文章(技术6+前端6+生活5+随笔5)；app.py 改用绝对路径 os.path.join(basedir,"blog.db") 确保跨环境一致；新增第 4 分类"前端" |
+| 2026-07-16 | 修复 SQLite 路径被 .env 覆盖 | `app.py` | .env 中 DATABASE_URL=sqlite:///blog.db 覆盖了绝对路径；改为本地 sqlite 始终用绝对路径，仅生产 postgres 用环境变量；删除 instance/ 旧数据库 |
+| 2026-07-16 | 修复前端仍显示 8 篇（真正根因） | `frontend/src/lib/store.ts` | 发现前端实际调用 Next.js API Routes（内存 store.ts）而非 Flask；store.ts initStore 仅含 8 篇硬编码种子数据；新增 22 篇文章+第 4 分类"前端"到 store.ts，总计 30 篇 4 分类 |
 
 ---
 
-> **统计：** 本项目共经历 **39 轮 AI 对话**，覆盖项目初始化 → 前端开发 → 后端开发 → 部署调试 → 架构重构 → UI 重设计 → 交互优化 → 搜索分页 → 文档完善全流程。
+> **统计：** 本项目共经历 **50 轮 AI 对话**，覆盖项目初始化 → 前端开发 → 后端开发 → 部署调试 → 架构重构 → UI 重设计 → 交互优化 → 搜索分页 → 文章扩充 → 轮播图 → 详情页侧边栏 → 数据库持久化 → 全流程。
