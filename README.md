@@ -1,6 +1,6 @@
 # Blog System
 
-基于 **Next.js 16** 的全栈博客系统，前后端一体化，一个命令启动，一键部署 Vercel。
+基于 **Next.js 16 + Flask** 的全栈博客系统，双后端架构（Flask + SQLite 持久化 + Next.js API Routes 内存存储），一键部署 Vercel。
 
 ![主题色](https://img.shields.io/badge/主题-靛蓝渐变-4F46E5?style=flat-square)
 ![框架](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
@@ -39,10 +39,10 @@
 
 ```
 blog-system/
-├── frontend/                       # Next.js 项目（前后端一体化）
+├── frontend/                       # Next.js 项目（前端 + API 路由）
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── api/                # API 路由（替代 Flask 后端）
+│   │   │   ├── api/                # API 路由（Vercel 部署时使用内存存储）
 │   │   │   │   ├── health/         # GET  /api/health
 │   │   │   │   ├── posts/          # GET/POST /api/posts
 │   │   │   │   │   └── [id]/       # GET/PUT/DELETE /api/posts/:id
@@ -53,6 +53,7 @@ blog-system/
 │   │   │   ├── page.tsx            # 文章列表页（首页）
 │   │   │   └── not-found.tsx       # 全局 404 页
 │   │   ├── components/             # 通用组件
+│   │   │   ├── Carousel.tsx         # 轮播图组件
 │   │   │   ├── ClientLayout.tsx    # 客户端布局桥接
 │   │   │   ├── EmptyState.tsx      # 空状态（可复用）
 │   │   │   ├── PageTransition.tsx  # 页面过渡动画
@@ -62,7 +63,7 @@ blog-system/
 │   │   │   └── ToastProvider.tsx   # Toast 全局配置
 │   │   └── lib/
 │   │       ├── api.ts              # API 客户端
-│   │       └── store.ts            # 数据存储层（8 篇种子文章）
+│   │       └── store.ts            # 数据存储层（30 篇种子文章）
 │   ├── next.config.ts
 │   ├── package.json
 │   └── vercel.json
@@ -74,7 +75,8 @@ blog-system/
     ├── routes/
     │   ├── posts.py
     │   └── categories.py
-    ├── seed.py                     # 数据库种子脚本
+    ├── seed.py                     # 数据库种子脚本（前 8 篇）
+    ├── add_posts.py                # 追加文章脚本（后 22 篇）
     └── requirements.txt
 ```
 
@@ -102,7 +104,7 @@ python -m venv venv
 
 Flask 运行在 `http://localhost:5000`。
 
-> **数据库说明：** 项目自带 `backend/blog.db` SQLite 数据库文件，包含 3 个分类和 8 篇种子文章。克隆后可直接使用，无需额外配置数据库。如需重新生成种子数据，运行 `./venv/Scripts/python seed.py`。
+> **数据库说明：** 项目自带 `backend/blog.db` SQLite 数据库文件，包含 4 个分类和 30 篇种子文章。克隆后可直接使用，无需额外配置数据库。如需重新生成种子数据，运行 `seed.py` + `add_posts.py`。
 
 ### 2. 前端（Next.js）
 
@@ -117,6 +119,8 @@ npm run dev
 ```
 
 浏览器打开 `http://localhost:3000` 即可访问。
+
+> **双后端架构说明：** 项目提供两套 API 实现。本地开发时使用 **Flask + SQLite**（`backend/`），数据持久化，重启不丢失。Vercel 部署时使用 **Next.js API Routes**（`frontend/src/app/api/`），数据存储在内存中，冷启动后重置为种子数据。两套 API 接口完全一致，前端无需修改。
 
 ### API 接口
 
@@ -148,6 +152,7 @@ npm run dev
 
 | 组件 | 说明 |
 |------|------|
+| `Carousel` | 首页轮播图，自动播放推荐文章 |
 | `EmptyState` | 空状态占位，支持 icon/title/description/action |
 | `SkeletonCard` | 骨架屏，4 种变体：list-item/article/table-row/stat-card |
 | `SearchBar` | 搜索框，500ms 防抖，输入即搜 |
@@ -188,6 +193,6 @@ npm run dev
 
 - **数据存储：** 使用 SQLite 数据库（`backend/blog.db`），数据持久化保存，重启服务不会丢失
 - **数据库位置：** `backend/blog.db`，已提交到 Git 仓库，克隆即可使用
-- **种子数据：** 包含 3 个分类（技术/生活/随笔/前端）和 8 篇 Markdown 文章
-- **重建数据库：** 删除 `backend/blog.db` 后运行 `cd backend && ./venv/Scripts/python seed.py`
+- **种子数据：** 包含 4 个分类（技术/生活/随笔/前端）和 30 篇 Markdown 文章
+- **重建数据库：** 删除 `backend/blog.db` 后依次运行 `cd backend && ./venv/Scripts/python seed.py && ./venv/Scripts/python add_posts.py`
 - **热更新：** Flask `debug=True` 支持自动重载，Next.js Turbopack 支持 HMR
