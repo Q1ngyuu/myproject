@@ -50,7 +50,7 @@ export default function Carousel({ images, interval = 5000 }: CarouselProps) {
 
   return (
     <div
-      className="relative mx-auto w-full max-w-6xl overflow-hidden rounded-3xl shadow-2xl shadow-gray-400/30"
+      className="relative w-full overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

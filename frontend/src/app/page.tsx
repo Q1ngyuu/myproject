@@ -113,9 +113,7 @@ export default function Home() {
       </header>
 
       {/* ── Carousel ── */}
-      <div className="mx-auto max-w-6xl px-4 pt-8">
-        <Carousel images={CAROUSEL_IMAGES} interval={5000} />
-      </div>
+      <Carousel images={CAROUSEL_IMAGES} interval={5000} />
 
       {/* Main */}
       <main className="mx-auto max-w-6xl px-4 py-12">
