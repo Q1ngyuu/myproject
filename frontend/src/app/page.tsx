@@ -84,7 +84,6 @@ export default function Home() {
   const handlePageChange = useCallback(
     (p: number) => {
       fetchPosts(searchQuery || undefined, p);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     },
     [fetchPosts, searchQuery]
   );
