@@ -14,7 +14,10 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or "dev-key-change-in-production"
 
 database_url = os.getenv("DATABASE_URL")
-if not database_url:
+# Use absolute path for local SQLite; DATABASE_URL only for production
+if database_url and "://" in database_url and not database_url.startswith("sqlite"):
+    pass  # use production DATABASE_URL (postgres, mysql, etc.)
+else:
     database_url = "sqlite:///" + os.path.join(basedir, "blog.db")
 # Railway provides postgres:// but SQLAlchemy needs postgresql://
 if database_url and database_url.startswith("postgres://"):
