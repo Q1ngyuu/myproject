@@ -45,8 +45,19 @@ export default function Home() {
   const [posts, setPosts] = useState<PostListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("homeSearchQuery") || "";
+    }
+    return "";
+  });
+  const [page, setPage] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem("homePage");
+      return saved ? parseInt(saved, 10) : 1;
+    }
+    return 1;
+  });
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -69,9 +80,11 @@ export default function Home() {
     }
   }, []);
 
+  // ── Restore previous page & fetch ──
   useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+    fetchPosts(searchQuery || undefined, page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Scroll past carousel when returning from detail page ──
   useEffect(() => {
@@ -84,6 +97,12 @@ export default function Home() {
       }
     }
   }, [loading]);
+
+  // ── Persist page & search query for back-navigation ──
+  useEffect(() => {
+    sessionStorage.setItem("homePage", String(page));
+    sessionStorage.setItem("homeSearchQuery", searchQuery);
+  }, [page, searchQuery]);
 
   const handleSearch = useCallback(
     (q: string) => {
