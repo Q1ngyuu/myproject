@@ -8,6 +8,19 @@ import EmptyState from "@/components/EmptyState";
 import SkeletonCard from "@/components/SkeletonCard";
 import SearchBar from "@/components/SearchBar";
 import Pagination from "@/components/Pagination";
+import Carousel from "@/components/Carousel";
+
+// ── Carousel images ──
+const CAROUSEL_IMAGES = [
+  "/pictures/19f4815b536e7e2592ff4ea45df5e57d.jpg",
+  "/pictures/c93121ba9839303c657e1ef5479a353c.jpg",
+  "/pictures/3573f6c9a926b125943739cdb3bbbd00.JPG",
+  "/pictures/f9beaa1389e8beb34de39452d3f1948a.JPG",
+  "/pictures/c443663b7d64fac98c24961456762862.JPG",
+  "/pictures/cb0ba67533a406d600d729639dce08d7.jpg",
+  "/pictures/b13d3f0d20b82aa08c4d268015235355.jpg",
+  "/pictures/c216996af9cce8f8fb097088cdb25cef.jpg",
+];
 
 // ── Stagger animation variants ──
 
@@ -98,6 +111,11 @@ export default function Home() {
           </Link>
         </div>
       </header>
+
+      {/* ── Carousel ── */}
+      <div className="mx-auto max-w-6xl px-4 pt-8">
+        <Carousel images={CAROUSEL_IMAGES} interval={5000} />
+      </div>
 
       {/* Main */}
       <main className="mx-auto max-w-6xl px-4 py-12">
