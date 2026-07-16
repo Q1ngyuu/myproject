@@ -13,9 +13,16 @@ export default function SearchBar({
 }: SearchBarProps) {
   const [value, setValue] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
 
-  // Debounced search
+  // Debounced search (skip initial mount)
   useEffect(() => {
+    // Skip the initial render to avoid resetting restored page state
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
