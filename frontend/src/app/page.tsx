@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { getPosts, type PostListItem } from "@/lib/api";
@@ -51,6 +51,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
 
   const PAGE_SIZE = 6;
+  const mainRef = useRef<HTMLElement>(null);
 
   const fetchPosts = useCallback(async (q?: string, p = 1) => {
     setLoading(true);
@@ -71,6 +72,18 @@ export default function Home() {
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
+
+  // ── Scroll past carousel when returning from detail page ──
+  useEffect(() => {
+    if (!loading && mainRef.current) {
+      const shouldScroll = sessionStorage.getItem("scrollPastCarousel");
+      if (shouldScroll) {
+        requestAnimationFrame(() => {
+          mainRef.current?.scrollIntoView({ behavior: "instant" });
+        });
+      }
+    }
+  }, [loading]);
 
   const handleSearch = useCallback(
     (q: string) => {
@@ -115,7 +128,7 @@ export default function Home() {
       <Carousel images={CAROUSEL_IMAGES} interval={5000} />
 
       {/* Main */}
-      <main className="mx-auto max-w-6xl px-4 py-12">
+      <main ref={mainRef} className="mx-auto max-w-6xl px-4 py-12">
         {/* Hero heading */}
         <div className="mb-10">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -157,6 +170,7 @@ export default function Home() {
                 <motion.div key={post.id} variants={item}>
                   <Link
                     href={`/posts/${post.id}`}
+                    onClick={() => sessionStorage.setItem("scrollPastCarousel", "true")}
                     className="group relative flex items-start justify-between gap-6 px-6 py-5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-gradient-to-r hover:from-indigo-50/40 hover:to-blue-50/40 hover:shadow-md"
                   >
                     {/* Hover accent bar */}

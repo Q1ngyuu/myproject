@@ -102,6 +102,7 @@ export default function PostDetailPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
           <Link
             href="/"
+            onClick={() => sessionStorage.setItem("scrollPastCarousel", "true")}
             className="flex items-center gap-2.5 text-xl font-bold text-gray-900"
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 text-base shadow-md shadow-indigo-500/20">
@@ -111,6 +112,7 @@ export default function PostDetailPage() {
           </Link>
           <Link
             href="/"
+            onClick={() => sessionStorage.setItem("scrollPastCarousel", "true")}
             className="group inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors duration-300 hover:text-indigo-600"
           >
             <span className="transition-transform duration-300 group-hover:-translate-x-1">
@@ -167,6 +169,7 @@ export default function PostDetailPage() {
             <div className="mt-10 text-center">
               <Link
                 href="/"
+                onClick={() => sessionStorage.setItem("scrollPastCarousel", "true")}
                 className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-3 text-sm font-medium text-white shadow-md shadow-indigo-500/25 transition-all duration-300 hover:from-indigo-700 hover:to-blue-700 hover:shadow-lg hover:scale-105"
               >
                 <span className="text-base transition-transform duration-300 group-hover:-translate-x-1.5">
@@ -204,6 +207,7 @@ export default function PostDetailPage() {
                 {otherPosts.length > 8 && (
                   <Link
                     href="/"
+                    onClick={() => sessionStorage.setItem("scrollPastCarousel", "true")}
                     className="mt-4 flex items-center justify-center gap-1 rounded-lg py-2 text-xs text-gray-400 transition-colors hover:text-indigo-600"
                   >
                     查看更多 →
