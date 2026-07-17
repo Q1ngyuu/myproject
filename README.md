@@ -1,6 +1,9 @@
 # Blog System
 
-基于 **Next.js 16 + Flask** 的全栈博客系统，双后端架构（Flask + SQLite 持久化 + Next.js API Routes 内存存储），项目已部署至Vercel服务器，链接：https://myproject-qingyu1.vercel.app/
+基于 **Next.js 16 + Flask** 的全栈博客系统，双后端架构（Flask + SQLite 持久化 + Next.js API Routes 内存存储），项目已部署至Vercel服务器
+链接：https://myproject-qingyu1.vercel.app/
+项目演示录屏链接： https://pan.baidu.com/s/1xtWWBvnARxlg5ZcEZBdoiQ?pwd=wn2i（若GitHub无法打开）
+
 
 ![主题色](https://img.shields.io/badge/主题-靛蓝渐变-4F46E5?style=flat-square)
 ![框架](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
